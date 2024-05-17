@@ -2,7 +2,7 @@
 Source code for the paper "Feature-Adaptive and Data-Scalable In-Context Learning" in ACL 2024 
 
 <div  align="center">  
-<img src="./FADS-ICL.png" alt="Framework of FADS-ICL" align=center />
+<img src="./FADS-ICL.png" width="50%" alt="Framework of FADS-ICL" align=center />
 </div>  
 
 ## Preparation
