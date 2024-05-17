@@ -7,18 +7,20 @@ Source code for the paper "Feature-Adaptive and Data-Scalable In-Context Learnin
 
 ## Preparation
 ### Environment
-The code is tested under torch==1.12.0 and transformers==4.20.1, though the requirement of spefic version is not very strict, run with no bugs, then you are set.
+The code is tested under python==3.8.18, torch==1.12.0 and transformers==4.39.0, though the requirement of spefic version is not very strict, run with no bugs, then you are set.
+
+**Note**: Almost all experiments is conducted on a single NVIDIA A800-SXM4-80GB, except for the llama-30B model which requires two. Besides, bitsandbytes (we use the 0.41.2 version) is needed in quantification for llama2-70B.
 ### Model
-Prepare your LLM ([gpt2](https://huggingface.co/gpt2-xl/tree/main) or opt) in `./llm/`, I personally prefer download them myself and configure the local path in scripts.
+Prepare your LLM ([gpt2](https://huggingface.co/gpt2-xl/tree/main), [llama](https://huggingface.co/docs/transformers/model_doc/llama) or [llama2](https://huggingface.co/docs/transformers/model_doc/llama2)) in `./llm/`, I personally prefer download them myself and configure the local path in scripts.
 ### Data
-[Download](https://drive.google.com/file/d/1Yh2blPkJvMtdm5xWKoHr2fLp2i2Bn5Ir/view?usp=share_link) dataset and unzip them in `./data`.\
+[Download](https://drive.google.com/file/d/1Pzsfn7mTwu6kIGssHGcXMVLH7hmLuShV/view?usp=drive_link) dataset and unzip them in `./data`.\
 The structure of the project looks like:
 ```
 .
 ├── run_icl.sh
-├── run_knnprompting.sh
+├── run_fads-icl.sh
 ├── icl.py
-├── knn_prompting.py
+├── fads-icl.py
 ├── utils
 │   ├── anchor.py
 │   ├── dataset.py
@@ -39,55 +41,28 @@ The structure of the project looks like:
 ```
 
 ## Run
-Run kNNPrompting or In-Context Learning as follows, check the configuration in the script including dataset, llm, seed, etc.
+Run FADS-ICL or In-Context Learning as follows, check the configuration in the script including dataset, llm, seed, etc.
 ```
-bash run_knnprompting.sh
+bash run_fads-icl.sh
 ```
 or
 ```
 bash run_icl.sh
 ```
 ## Results
-As the entire framework is training-free, you shall get **exact** results w.r.t. random seeds as follows (invariant to different environment):
+For the SST dataset, you shall get **exact** results w.r.t. random seeds as follows (invariant to different environment possibly):
 
 | Seed                                | 1      | 2      | 3      | 4      | 5      |
 | ----------------------------------- | ------ | ------ | ------ | ------ | ------ |
-| **In-Context Learning** (gpt2-xl)   | 0.8438 | 0.8125 | 0.7227 | 0.8633 | 0.8242 |
-| **KNN Prompting** (gpt2-xl, N=1024) | 0.8711 | 0.8867 | 0.8906 | 0.8711 | 0.8906 |
+| **In-Context Learning** (gpt2-xl, 16-shot)   | 0.8438 | 0.8125 | 0.7227 | 0.8633 | 0.8242 |
+| **FADS-ICL** (gpt2-xl, 16-shot) | 0.9063 | 0.8594 | 0.7344 | 0.9297 | 0.9023 |
+| **FADS-ICL** (gpt2-xl, 128-shot) | 0.8945 | 0.8789 | 0.8828 | 0.8906 | 0.8984 |
 
-Full results are listed in the paper (see Table 8 and others).
+Full results are listed in the paper (see Table 2 and Table 3).
 
-## Citation
+<!-- ## Citation
  * If you have any quesitons, feel free to open an issue.
  * If you find this repo useful, please cite us as:
-```
-@inproceedings{
-xu2023knn,
-title={\$k\${NN} Prompting: Beyond-Context Learning with Calibration-Free Nearest Neighbor Inference},
-author={Benfeng Xu and Quan Wang and Zhendong Mao and Yajuan Lyu and Qiaoqiao She and Yongdong Zhang},
-booktitle={The Eleventh International Conference on Learning Representations },
-year={2023},
-url={https://openreview.net/forum?id=fe2S7736sNS}
-}
-```
-
-## Finetune
-
-After the above steps are completed, modify the path parameters of the [script](https://github.com/jiahaozhenbang/SCOPE/blob/main/train.sh) and run:
-
-`bash train.sh`
-
-## Inference
-
-Please modify the path parameters of the [script](predict.sh) and run:
-
-`bash predict.sh`
-
-## Citation
-
-If you find this work is useful for your research, please cite our papers:
-
-#### Improving Chinese Spelling Check by Character Pronunciation Prediction: The Effects of Adaptivity and Granularity
 
 ```bibtex
 @inproceedings{li-etal-2022-improving-chinese,
@@ -108,4 +83,4 @@ If you find this work is useful for your research, please cite our papers:
     abstract = "Chinese spelling check (CSC) is a fundamental NLP task that detects and corrects spelling errors in Chinese texts. As most of these spelling errors are caused by phonetic similarity, effectively modeling the pronunciation of Chinese characters is a key factor for CSC. In this paper, we consider introducing an auxiliary task of Chinese pronunciation prediction (CPP) to improve CSC, and, for the first time, systematically discuss the adaptivity and granularity of this auxiliary task. We propose SCOPE which builds upon a shared encoder two parallel decoders, one for the primary CSC task and the other for a fine-grained auxiliary CPP task, with a novel adaptive weighting scheme to balance the two tasks. In addition, we design a delicate iterative correction strategy for further improvements during inference. Empirical evaluation shows that SCOPE achieves new state-of-the-art on three CSC benchmarks, demonstrating the effectiveness and superiority of the auxiliary CPP task. Comprehensive ablation studies further verify the positive effects of adaptivity and granularity of the task.",
 }
 
-```
+``` -->
